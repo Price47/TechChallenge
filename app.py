@@ -21,32 +21,18 @@ app.debug = True
 
 @app.route('/')
 def index():
-    s3 = boto3.resource('s3')
+    header = "Use this service to find brewing instructions for different beers. " \
+             "You can search using the following queries:\n\n"
+    any = "/brew/any\n\t Search for a random beer\n"
+    id = "/brew/id/{id}\n\t Search by beer id (if you know it)\n"
+    name = "/brew/name/{name}\n\t Search by beer name\n"
+    stronger = "/brew/stronger/{than}\n\t Search by ABV\n"
+    api = "{}\n{}\n{}\n{}\n{}".format(header,any,id,name,stronger)
 
-    with open('/tmp/hello.txt', 'rb') as data:
-        s3.upload_fileobj(data, BUCKET_NAME, 'mykey')
-    return {'hello':'world'}
+    return Response(body=api,
+             status_code=200,
+             headers={'Content-Type': 'text/plain'})
 
-
-@app.route('/hello/{name}')
-def hello_name(name):
-   return {'hello': name}
-
-
-
-def upload_file(name):
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=AWS_ACCESS_KEY,
-        aws_secret_access_key=AWS_SECRET_KEY
-    )
-
-    urllib.urlretrieve(name, "/tmp/local-filename.jpg")
-
-    f = open('/tmp/local-filename.jpg', 'rb')
-    key = "beer.jpg"
-
-    s3.Bucket(BUCKET_NAME).put_object(Key=key, Body=f)
 
 
 @app.route('/brew/any')
@@ -148,6 +134,21 @@ def additionalInfo(json):
 
     body += "\n\nContributed by {}".format(json['contributed_by'])
     return body
+
+
+def upload_file(name):
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY
+    )
+
+    urllib.urlretrieve(name, "/tmp/local-filename.jpg")
+
+    f = open('/tmp/local-filename.jpg', 'rb')
+    key = "beer.jpg"
+
+    s3.Bucket(BUCKET_NAME).put_object(Key=key, Body=f)
 
 
 def prettyPrintData(json):
