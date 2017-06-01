@@ -151,6 +151,7 @@ def additionalInfo(json):
 
 
 def prettyPrintData(json):
+    status = "200: ok"
     header = beerVerbose(json)
     production_details = productionDetails(json)
     ingredient_list = ingredients(json)
@@ -161,6 +162,7 @@ def prettyPrintData(json):
 
     console_buffer = "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
     formattedString = "{}" \
+                      "{}" \
              "{}\n" \
              "{}\n" \
              "\nBrewing Instructions:\n" \
@@ -172,7 +174,7 @@ def prettyPrintData(json):
              "\n\tExtra brewing info:\n"\
              "{}"\
              "{}\n" \
-             "{}\n".format(console_buffer, header, production_details,
+             "{}\n".format(status,console_buffer, header, production_details,
                         ingredient_list,brewing, additional_info, console_buffer,
                          page_link)
 
